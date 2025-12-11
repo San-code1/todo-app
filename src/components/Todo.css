@@ -8,8 +8,26 @@
   position: relative;
 }
 
-.view:hover {
-  background-color: #f3f4f6;
+/* Solo aplica hover en dispositivos con mouse/trackpad */
+@media (hover: hover) {
+  .view:hover {
+    background-color: #f3f4f6;
+  }
+
+  .toggle:hover {
+    background-color: #f3f4f6;
+  }
+
+  li:hover .destroy {
+    display: block;
+  }
+}
+
+/* Mostrar siempre el botón destroy en móvil */
+@media (hover: none) {
+  .destroy {
+    display: block;
+  }
 }
 
 .title {
@@ -34,10 +52,6 @@
   cursor: pointer;
   margin-right: 8px;
   corner-shape: squircle;
-}
-
-.toggle:hover {
-  background-color: #f3f4f6;
 }
 
 .toggle:checked {

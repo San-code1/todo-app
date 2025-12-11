@@ -3,7 +3,6 @@
   flex-direction: row;
   gap: 8px;
   justify-self: flex-start;
-  padding: 16px 16px 24px 16px;
 }
 
 .filter-button {
