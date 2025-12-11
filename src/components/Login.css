@@ -4,16 +4,17 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  gap: 16px;
+  gap: 8px;
 }
 
 .login-container h1 {
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .login-container p {
   color: #666;
+  margin-bottom: 16px;
 }
 
 .google-button {
@@ -28,6 +29,8 @@
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
+  border-radius: 16px;
+  corner-shape: squircle;
 }
 
 .google-button:hover {
