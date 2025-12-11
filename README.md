@@ -13,4 +13,4 @@
 - [x] Crear un TODO (Header)
 - [x] Poder editar el texto de un TODO (Doble click)
 - [x] Sincronizar con el backend
-- [ ] Añadir animaciones con Motion
+- [x] Añadir animaciones con Motion
