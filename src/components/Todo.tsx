@@ -55,8 +55,7 @@ export const Todo: React.FC<Props> = ({
         className='toggle'
         checked={completed}
         type='checkbox'
-        onChange={(e) => { setCompleted({ id, completed: e.target.checked }) }}
-        onClick={(e) => e.stopPropagation()}
+        onChange={(e) => { setCompleted({ id, completed: e.target.checked }) }} 
       />
       <label 
         className={`title ${completed ? 'completed' : ''}`}>{title}</label>

@@ -53,6 +53,7 @@
   margin-right: 8px;
   corner-shape: squircle;
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .toggle:checked {
@@ -83,6 +84,7 @@
   transform: translate(-50%, -50%);
   width: 44px;
   height: 44px;
+  pointer-events: none;
 }
 
 .destroy {
