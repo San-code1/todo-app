@@ -1,0 +1,30 @@
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clear-completed {
+  color: #666;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: transform 0.1s ease-in-out;
+}
+
+.clear-completed:hover {
+  color: #171717;
+  background-color: #f3f4f6;
+}
+
+.clear-completed:active {
+  transform: scale(0.98);
+}
+
+.clear-completed:focus-visible {
+  outline: 2px solid #171717;
+  outline-offset: 2px;
+}

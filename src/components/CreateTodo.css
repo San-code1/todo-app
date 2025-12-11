@@ -1,0 +1,59 @@
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  color: #666;
+  pointer-events: none;
+}
+
+.input-icon.left {
+  left: 16px;
+  color: #8f8f8f;
+}
+
+.input-icon.right {
+  right: 16px;
+  display: none;
+}
+
+.new-todo:focus + .input-icon.right {
+  display: block;
+}
+
+.new-todo {
+  border: none;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 16px 40px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  width: 100%;
+  color: #171717;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.new-todo::placeholder {
+  color: #8f8f8f;
+}
+
+/* Autofill (Chrome/Safari) */
+.new-todo:-webkit-autofill,
+.new-todo:-webkit-autofill:focus {
+  -webkit-text-fill-color: inherit;
+  transition: background-color 5000s ease-in-out 0s; /* truco para neutralizar */
+  box-shadow: 0 0 0px 1000px transparent inset; /* elimina el fondo */
+}
+
+.new-todo:focus {
+  outline: 2px solid #171717;
+}
+
+.new-todo:focus-visible {
+  outline: 2px solid #171717;
+  outline-offset: 2px;
+}

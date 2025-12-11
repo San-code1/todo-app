@@ -1,0 +1,97 @@
+@font-face {
+  font-family: "Geist Sans";
+  src: url("/src/fonts/Geist[wght].woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Sans";
+  src: url("/src/fonts/Geist-Italic[wght].woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/src/fonts/GeistMono[wght].woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/src/fonts/GeistMono-Italic[wght].woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --font-sans: "Geist Sans", system-ui, sans-serif;
+  color: #171717;
+  background-color: #fff;
+  font-family: var(--font-sans);
+}
+
+html {
+  box-sizing: border-box;
+}
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: "Geist Sans", system-ui, sans-serif;
+  font-size: 1rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+h2 {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #f0f0f0;
+}
+
+h3 {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: #f0f0f0;
+  letter-spacing: 0em;
+}
+
+p {
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
