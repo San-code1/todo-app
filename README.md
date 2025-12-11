@@ -12,5 +12,5 @@
 - [x] Crear Header con input (Header)
 - [x] Crear un TODO (Header)
 - [x] Poder editar el texto de un TODO (Doble click)
-- [ ] Sincronizar con el backend
+- [x] Sincronizar con el backend
 - [ ] Añadir animaciones con Motion
