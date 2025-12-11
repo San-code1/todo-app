@@ -7,6 +7,8 @@ import { Toolbar } from './components/Toolbar'
 import { TODO_FILTERS } from './consts'
 import { Footer } from './components/Footer'
 import { fetchTodos, saveTodos } from './services/jsonbin'
+import Lottie from 'lottie-react'
+import loaderAnimation from './assets/Lottie-logo-dark.json'
 
 const App = () => {
   const [todos, setTodos] = useState<TodoType[]>([])
@@ -100,12 +102,21 @@ const App = () => {
   }
 
   if (loading) {
-    return <main className="app"><p>Cargando...</p></main>
+    return <main className="app">
+      <div className='loading-container'>
+        <Lottie 
+            animationData={loaderAnimation} 
+            loop={true}
+            className='loading-animation'
+          />
+          <p className='loading'>Reading your list...</p>
+        </div>
+      </main>
   }
 
   return (
     <main className="app">
-      {saving && <span className="saving-indicator">Guardando...</span>}
+      {saving && <span className="saving-indicator">Saving task...</span>}
       <Header onAddTodo={handleAddTodo} />
       <Toolbar
         completedCount={completedCount}

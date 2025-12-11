@@ -12,9 +12,9 @@ hr {
   border: 1px solid #f0f0f0;
   margin-top: 8px;
   margin-bottom: 8px;
-  margin-left: 48px;
+  margin-left: 40px;
 }
 
 .todos {
-  padding: 0 12px;
+  padding: 0 16px 0 8px;
 }

@@ -24,6 +24,7 @@
 }
 
 .toggle {
+  position: relative;
   width: 24px;
   height: 24px;
   border-radius: 10px;
@@ -57,6 +58,16 @@
 .toggle:focus-visible {
   outline: 2px solid #171717;
   outline-offset: 2px;
+}
+
+.toggle::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
 }
 
 .destroy {
