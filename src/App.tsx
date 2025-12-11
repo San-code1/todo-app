@@ -6,66 +6,92 @@ import { type TodoId, type Todo as TodoType, type FilterValue, type TodoTitle } 
 import { Toolbar } from './components/Toolbar'
 import { TODO_FILTERS } from './consts'
 import { Footer } from './components/Footer'
-import { fetchTodos, saveTodos } from './services/jsonbin'
+import { Login } from './components/Login'
+import { useAuth } from './hooks/useAuth'
+import { fetchUserTodos, saveTodo, deleteTodo } from './services/firestore'
 import Lottie from 'lottie-react'
 import loaderAnimation from './assets/Lottie-logo-dark.json'
 import { LayoutGroup } from 'motion/react'
 
 const App = () => {
+  const { user, loading: authLoading, signInWithGoogle, signOut } = useAuth()
   const [todos, setTodos] = useState<TodoType[]>([])
   const [filterSelected, setFilterSelected] = useState<FilterValue>(TODO_FILTERS.ALL)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  // Cargar todos al iniciar
+  // Cargar todos cuando el usuario cambia
   useEffect(() => {
-    fetchTodos()
+    if (!user) {
+      setTodos([])
+      setLoading(false)
+      return
+    }
+
+    setLoading(true)
+    fetchUserTodos(user.uid)
       .then(setTodos)
       .catch(console.error)
       .finally(() => setLoading(false))
-  }, [])
+  }, [user])
 
-  // Guardar todos cuando cambien (con debounce simple)
-  useEffect(() => {
-    if (loading) return  // No guardar mientras carga inicial
+  const handleRemove = async ({ id }: TodoId): Promise<void> => {
+    if (!user) return
     
-    setSaving(true)
-    const timeoutId = setTimeout(() => {
-      saveTodos(todos)
-        .catch(console.error)
-        .finally(() => setSaving(false))
-    }, 500)  // Espera 500ms antes de guardar
-
-    return () => clearTimeout(timeoutId)
-  }, [todos, loading])
-
-  const handleRemove = ({id}: TodoId): void => {
     const newTodos = todos.filter((todo) => todo.id !== id)
     setTodos(newTodos)
+    
+    try {
+      await deleteTodo(user.uid, id)
+    } catch (error) {
+      console.error('Error deleting todo:', error)
+    }
   }
 
-  const handleCompletedTodo = (
-    {id, completed}: Pick<TodoType, 'id' | 'completed'>
-  ): void => {
+  const handleCompletedTodo = async (
+    { id, completed }: Pick<TodoType, 'id' | 'completed'>
+  ): Promise<void> => {
+    if (!user) return
+
     const newTodos = todos.map((todo) => {
       if (todo.id === id) {
-        return {
-          ...todo,
-          completed
-        }
+        return { ...todo, completed }
       }
       return todo
     })
     setTodos(newTodos)
+
+    const todoToUpdate = newTodos.find(t => t.id === id)
+    if (todoToUpdate) {
+      setSaving(true)
+      try {
+        await saveTodo(user.uid, todoToUpdate)
+      } catch (error) {
+        console.error('Error updating todo:', error)
+      } finally {
+        setSaving(false)
+      }
+    }
   }
 
   const handleFilterChange = (filter: FilterValue): void => {
     setFilterSelected(filter)
   }
 
-  const handleRemoveAllCompleted = (): void => {
+  const handleRemoveAllCompleted = async (): Promise<void> => {
+    if (!user) return
+
+    const completedTodos = todos.filter(todo => todo.completed)
     const newTodos = todos.filter(todo => !todo.completed)
     setTodos(newTodos)
+
+    try {
+      for (const todo of completedTodos) {
+        await deleteTodo(user.uid, todo.id)
+      }
+    } catch (error) {
+      console.error('Error deleting completed todos:', error)
+    }
   }
 
   const activeCount = todos.filter(todo => !todo.completed).length
@@ -77,35 +103,77 @@ const App = () => {
     return true
   })
 
-  const handleAddTodo = ({ title }: TodoTitle): void => {
-    const newTodo = {
+  const handleAddTodo = async ({ title }: TodoTitle): Promise<void> => {
+    if (!user) return
+
+    const newTodo: TodoType = {
       id: crypto.randomUUID(),
       title,
-      completed: false
+      completed: false,
+      createdAt: Date.now()
     }
-    const newTodos = [...todos, newTodo]
-    setTodos(newTodos)
+    setTodos(prevTodos => [newTodo, ...prevTodos])
+
+    setSaving(true)
+    try {
+      await saveTodo(user.uid, newTodo)
+    } catch (error) {
+      console.error('Error saving todo:', error)
+    } finally {
+      setSaving(false)
+    }
   }
 
-  const handleUpdateTitle = ({ id, title }: { id: string, title: string }): void => {
+  const handleUpdateTitle = async ({ id, title }: { id: string, title: string }): Promise<void> => {
+    if (!user) return
+
     const newTodos = todos.map((todo) => {
       if (todo.id === id) {
-        return {
-          ...todo,
-          title
-        }
+        return { ...todo, title }
       }
-
       return todo
     })
-
     setTodos(newTodos)
+
+    const todoToUpdate = newTodos.find(t => t.id === id)
+    if (todoToUpdate) {
+      setSaving(true)
+      try {
+        await saveTodo(user.uid, todoToUpdate)
+      } catch (error) {
+        console.error('Error updating todo:', error)
+      } finally {
+        setSaving(false)
+      }
+    }
   }
 
+  // Mostrar loader mientras verifica auth
+  if (authLoading) {
+    return (
+      <main className="app">
+        <div className='loading-container'>
+          <Lottie 
+            animationData={loaderAnimation} 
+            loop={true}
+            className='loading-animation'
+          />
+        </div>
+      </main>
+    )
+  }
+
+  // Mostrar login si no hay usuario
+  if (!user) {
+    return <Login onSignIn={signInWithGoogle} />
+  }
+
+  // Mostrar loader mientras carga los todos
   if (loading) {
-    return <main className="app">
-      <div className='loading-container'>
-        <Lottie 
+    return (
+      <main className="app">
+        <div className='loading-container'>
+          <Lottie 
             animationData={loaderAnimation} 
             loop={true}
             className='loading-animation'
@@ -113,11 +181,20 @@ const App = () => {
           <p className='loading'>Reading your list...</p>
         </div>
       </main>
+    )
   }
 
   return (
     <main className="app">
       {saving && <span className="saving-indicator">Saving task...</span>}
+      
+      {/* User info + Sign out */}
+      <div className="user-info">
+        <img src={user.photoURL || ''} alt={user.displayName || 'User'} className="user-avatar" />
+        <span className="user-name">{user.displayName}</span>
+        <button onClick={signOut} className="sign-out-button">Sign out</button>
+      </div>
+
       <Header onAddTodo={handleAddTodo} />
       <Toolbar
         completedCount={completedCount}
@@ -126,17 +203,17 @@ const App = () => {
         handleFilterChange={handleFilterChange}
       />
       <LayoutGroup>
-      <Todos 
-        todos={filteredTodos} 
-        removeTodo={handleRemove} 
-        setCompleted={handleCompletedTodo} 
-        setTitle={handleUpdateTitle}
-        filterSelected={filterSelected}
+        <Todos 
+          todos={filteredTodos} 
+          removeTodo={handleRemove} 
+          setCompleted={handleCompletedTodo} 
+          setTitle={handleUpdateTitle}
+          filterSelected={filterSelected}
         />
-      <Footer
-        activeCount={activeCount}
-        completedCount={completedCount}
-      />
+        <Footer
+          activeCount={activeCount}
+          completedCount={completedCount}
+        />
       </LayoutGroup>
     </main>
   )
