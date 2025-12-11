@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import './Todo.css'
 import { type Todo as TodoType } from '../types'
 
+
 interface Props {
   id: string
   title: string

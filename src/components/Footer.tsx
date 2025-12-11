@@ -1,4 +1,5 @@
 import './Footer.css'
+import { motion } from "motion/react"
 
 interface Props {
   activeCount: number
@@ -11,7 +12,11 @@ export const Footer: React.FC<Props> = ({
   }) => {
   const totalCount = activeCount + completedCount
   return (
-    <footer className="footer">
+    <motion.footer 
+      className="footer"
+      layout
+      transition={{ duration: 0.1 }}
+    >
         <div>
           <strong>{totalCount}</strong> items
         </div>
@@ -19,6 +24,6 @@ export const Footer: React.FC<Props> = ({
         <div>
           <strong>{completedCount}</strong> completed
         </div>
-    </footer>
+    </motion.footer>
   )
 }

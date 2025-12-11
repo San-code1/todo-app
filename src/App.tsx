@@ -9,6 +9,7 @@ import { Footer } from './components/Footer'
 import { fetchTodos, saveTodos } from './services/jsonbin'
 import Lottie from 'lottie-react'
 import loaderAnimation from './assets/Lottie-logo-dark.json'
+import { LayoutGroup } from 'motion/react'
 
 const App = () => {
   const [todos, setTodos] = useState<TodoType[]>([])
@@ -124,6 +125,7 @@ const App = () => {
         onClearCompleted={handleRemoveAllCompleted}
         handleFilterChange={handleFilterChange}
       />
+      <LayoutGroup>
       <Todos 
         todos={filteredTodos} 
         removeTodo={handleRemove} 
@@ -134,6 +136,7 @@ const App = () => {
         activeCount={activeCount}
         completedCount={completedCount}
       />
+      </LayoutGroup>
     </main>
   )
 }
