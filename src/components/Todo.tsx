@@ -62,6 +62,7 @@ export const Todo: React.FC<Props> = ({
       <button 
         className='destroy' 
         onClick={() => { removeTodo({ id }) }}
+        aria-label={`Delete ${title}`}
       >
         <svg
           height="16"

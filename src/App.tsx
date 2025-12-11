@@ -74,7 +74,7 @@ const App = () => {
   const filteredTodos = todos.filter(todo => {
     if (filterSelected === TODO_FILTERS.ACTIVE) return !todo.completed
     if (filterSelected === TODO_FILTERS.COMPLETED) return todo.completed
-    return todo
+    return true
   })
 
   const handleAddTodo = ({ title }: TodoTitle): void => {
@@ -131,6 +131,7 @@ const App = () => {
         removeTodo={handleRemove} 
         setCompleted={handleCompletedTodo} 
         setTitle={handleUpdateTitle}
+        filterSelected={filterSelected}
         />
       <Footer
         activeCount={activeCount}
