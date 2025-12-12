@@ -33,25 +33,6 @@ A modern, fast, and beautiful todo application built with React and Firebase.
 - **Build Tool:** Vite
 - **Deployment:** Vercel
 
-## 📦 Installation
-
-1. Clone the repository:
-git clone https://github.com/San-code1/todo-app.git
-cd todo-app2. Install dependencies:
-npm install3. Create a `.env` file in the root directory:
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-VITE_FIREBASE_APP_ID=your_app_id4. Start the development server:
-npm run dev## 🔧 Firebase Setup
-
-1. Create a project at [Firebase Console](https://console.firebase.google.com)
-2. Enable **Authentication** → Sign-in method → Google
-3. Create **Firestore Database** in test mode
-4. Add your Vercel domain to **Authorized domains** in Authentication settings
-
 ## 📁 Project Structure
 
 ```
