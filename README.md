@@ -86,13 +86,18 @@ The app is configured for automatic deployment on Vercel.
 3. Add environment variables in Vercel dashboard
 4. Deploy!
 
+# 🙏 Acknowledgments
+
+This project was created as part of the React course by [Midudev](https://github.com/midudev). Thanks for the amazing content!
+
 ## 📄 License
 
 MIT
 
 ---
+---
 
-Made with ❤️ by [Javi Sánchez](https://github.com/San-code1)
+Made by [Javi Sánchez](https://github.com/San-code1)
 ```
 
 
