@@ -58,7 +58,10 @@ export const Todo: React.FC<Props> = ({
         onChange={(e) => { setCompleted({ id, completed: e.target.checked }) }} 
       />
       <label 
-        className={`title ${completed ? 'completed' : ''}`}>{title}</label>
+        className={`title ${completed ? 'completed' : ''}`}
+        onDoubleClick={() => { setIsEditing(id) }}>
+          {title}
+          </label>
       <button 
         className='destroy' 
         onClick={() => { removeTodo({ id }) }}

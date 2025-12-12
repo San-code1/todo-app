@@ -68,7 +68,6 @@ export const Todos: React.FC<Props> = ({
             ${todo.completed ? 'completed' : ''}
             ${isEditing === todo.id ? 'editing' : ''}
           `}
-          onDoubleClick={() => { setIsEditing(todo.id) }}
           variants={{
             hidden: { opacity: 0, y: 10 },
             visible: { opacity: 1, y: 0 }
