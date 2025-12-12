@@ -34,7 +34,7 @@ export const Todos: React.FC<Props> = ({
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -10 }}
-    transition={{ duration: 0.1 }}
+    transition={{ duration: 0.15 }}
     >
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path fillRule="evenodd" clipRule="evenodd" d="M20.4928 17.3111L21.7672 10.4281L21.9649 9.3605C22.0132 9.09973 21.9559 8.83043 21.8057 8.61189L18.2689 3.46778C18.1187 3.24923 17.8877 3.09932 17.627 3.05104L16.5593 2.85335L11.6429 1.94302L10.168 1.66992L9.89485 3.14485L7.71006 14.9443C7.45868 16.3019 8.35547 17.6063 9.71311 17.8577L17.5794 19.3142C18.937 19.5656 20.2414 18.6688 20.4928 17.3111ZM19.0178 17.038L20.2923 10.155L16.8508 9.51781L15.3759 9.24471L15.649 7.76978L16.2862 4.32828L11.3698 3.41795L9.18499 15.2174C9.08443 15.7605 9.44316 16.2822 9.98621 16.3827L17.8525 17.8393C18.3956 17.9398 18.9173 17.5811 19.0178 17.038ZM17.1239 8.04288L17.648 5.21232L19.9545 8.567L17.1239 8.04288Z" fill="#666"/>
@@ -74,7 +74,7 @@ export const Todos: React.FC<Props> = ({
           }}
           animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           exit={{ opacity: 0, y: -10, filter: 'blur(10px)' }}
-          transition={{ duration: 0.1}}
+          transition={{ duration: 0.15}}
           layout
         >
           <Todo

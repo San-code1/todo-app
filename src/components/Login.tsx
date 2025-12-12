@@ -1,5 +1,17 @@
 import './Login.css'
 
+import { Todos } from './Todos'
+import { Header } from './Header'
+import { TODO_FILTERS } from '../consts'
+import { motion } from 'motion/react'
+
+const MOCK_TODOS = [
+  { id: '1', title: 'Buy groceries', completed: false, createdAt: Date.now() },
+  { id: '2', title: 'Call dentist', completed: false, createdAt: Date.now() - 1000 },
+  { id: '3', title: 'Finish project proposal', completed: true, createdAt: Date.now() - 2000 },
+  { id: '4', title: 'Morning workout', completed: true, createdAt: Date.now() - 3000 },
+]
+
 interface Props {
   onSignIn: () => void
 }
@@ -23,6 +35,28 @@ export const Login: React.FC<Props> = ({ onSignIn }) => {
         </svg>
         Continue with Google
       </button>
+
+      <div className="preview-container">
+        <motion.div className="app-mockup" 
+          initial={{ opacity: 0, translateY: 10, filter: 'blur(10px)' }} 
+          animate={{ opacity: 1, translateY: 0, filter: 'blur(0px)' }} 
+          exit={{ opacity: 0, translateY: 10, filter: 'blur(10px)' }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+          >
+          <Header 
+            autoFocus={false} 
+            onAddTodo={() => {}}/>
+          <Todos 
+            todos={MOCK_TODOS}
+            setCompleted={() => {}}
+            setTitle={() => {}}
+            removeTodo={() => {}}
+            filterSelected={TODO_FILTERS.ALL}
+          />
+        </motion.div>
+        <div className="mockup-overlay">
+        </div>
+      </div>
     </div>
   )
 }

@@ -5,9 +5,10 @@ import './CreateTodo.css'
 
 interface Props {
   saveTodo: ({ title }: TodoTitle) => void
+  autoFocus?: boolean
 }
 
-export const CreateTodo: React.FC<Props> = ({ saveTodo }) => {
+export const CreateTodo: React.FC<Props> = ({ saveTodo, autoFocus = true }) => {
   const [inputValue, setInputValue] = useState('')
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -38,7 +39,7 @@ export const CreateTodo: React.FC<Props> = ({ saveTodo }) => {
           placeholder="Add a new todo" 
           value={inputValue}
           onChange={(event) => { setInputValue(event.target.value) }}
-          autoFocus
+          autoFocus={autoFocus}
         />
         <svg
           className="input-icon right"
