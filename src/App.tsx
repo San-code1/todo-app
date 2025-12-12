@@ -13,7 +13,6 @@ import Lottie from 'lottie-react'
 import loaderAnimation from './assets/Lottie-logo-dark.json'
 import { LayoutGroup } from 'motion/react'
 import { loadTodosFromStorage, saveTodosToStorage } from './services/localstorage'
-import { Analytics } from '@vercel/analytics/react';
 
 type UserMode = 'authenticated' | 'guest' | null
 
@@ -341,7 +340,6 @@ const App = () => {
           completedCount={completedCount}
         />
       </LayoutGroup>
-      <Analytics />
     </main>
   )
 }
