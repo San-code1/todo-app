@@ -28,7 +28,8 @@ import {
     await setDoc(todoRef, {
       title: todo.title,
       completed: todo.completed,
-      createdAt: todo.createdAt || Date.now()
+      createdAt: todo.createdAt || Date.now(),
+      completedAt: todo.completedAt || null 
     })
   }
   

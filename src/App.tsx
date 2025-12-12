@@ -55,7 +55,10 @@ const App = () => {
 
     const newTodos = todos.map((todo) => {
       if (todo.id === id) {
-        return { ...todo, completed }
+        return {
+          ...todo,
+          completed,
+          completedAt: completed ? Date.now() : undefined}
       }
       return todo
     })
@@ -101,6 +104,16 @@ const App = () => {
     if (filterSelected === TODO_FILTERS.ACTIVE) return !todo.completed
     if (filterSelected === TODO_FILTERS.COMPLETED) return todo.completed
     return true
+  })
+  .sort((a, b) => {
+    if (a.completed && !b.completed) return 1
+    if (!a.completed && b.completed) return -1
+    
+    if (a.completed && b.completed) {
+      return (b.completedAt || 0) - (a.completedAt || 0)
+    }
+    
+    return (b.createdAt || 0) - (a.createdAt || 0)
   })
 
   const handleAddTodo = async ({ title }: TodoTitle): Promise<void> => {
