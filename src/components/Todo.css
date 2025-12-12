@@ -54,6 +54,10 @@
   corner-shape: squircle;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  position: relative;
+  z-index: 10;
 }
 
 .toggle:checked {
