@@ -83,6 +83,48 @@ body {
   color: #333;
 }
 
+/* Guest mode styles */
+
+.guest-info-container {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+}
+.guest-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 16px 32px 16px;
+}
+
+.guest-badge {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #171717;
+}
+
+.sign-in-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: white;
+  border: 1px solid #ddd;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sign-in-button:hover {
+  background: #f9f9f9;
+  border-color: #ccc;
+}
+
 @media (max-width: 640px) {
   .app {
     padding-top: 1rem;
