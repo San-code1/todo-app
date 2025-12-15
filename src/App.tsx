@@ -1,18 +1,26 @@
 import './App.css'
 import { useState, useEffect } from 'react'
+import { flushSync } from 'react-dom'
 import { Todos } from './components/Todos'
 import { Header } from './components/Header'
-import { type TodoId, type Todo as TodoType, type FilterValue, type TodoTitle } from './types'
+import { type TodoId, type Todo as TodoType, type FilterValue, type TodoTitle, type TodoList, type View } from './types'
 import { Toolbar } from './components/Toolbar'
 import { TODO_FILTERS } from './consts'
 import { Footer } from './components/Footer'
 import { Login } from './components/Login'
+import { ListsView } from './components/ListsView'
 import { useAuth } from './hooks/useAuth'
-import { fetchUserTodos, saveTodo, deleteTodo } from './services/firestore'
+import { fetchListTodos, saveTodo, deleteTodo, fetchUserLists, saveList, deleteList } from './services/firestore'
 import Lottie from 'lottie-react'
 import loaderAnimation from './assets/Lottie-logo-dark.json'
 import { LayoutGroup } from 'motion/react'
-import { loadTodosFromStorage, saveTodosToStorage } from './services/localstorage'
+import { 
+  loadTodosFromStorage, 
+  saveTodosToStorage, 
+  loadListsFromStorage, 
+  saveListsToStorage,
+  deleteListTodos 
+} from './services/localstorage'
 import { useTheme } from './hooks/useTheme'
 
 type UserMode = 'authenticated' | 'guest' | null
@@ -20,64 +28,214 @@ type UserMode = 'authenticated' | 'guest' | null
 const App = () => {
   const { user, loading: authLoading, signInWithGoogle, signOut } = useAuth()
   const { theme, changeTheme } = useTheme()
+
   const [userMode, setUserMode] = useState<UserMode>(null)
+  const [currentView, setCurrentView] = useState<View>('lists')
+  const [lists, setLists] = useState<TodoList[]>([])
+  const [activeListId, setActiveListId] = useState<string | null>(null)
   const [todos, setTodos] = useState<TodoType[]>([])
   const [filterSelected, setFilterSelected] = useState<FilterValue>(TODO_FILTERS.ALL)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [listCounts, setListCounts] = useState<Record<string, { total: number; completed: number }>>({})
 
   const isGuest = userMode === 'guest'
   const isAuthenticated = user !== null
 
-  // Detectar cuando el usuario se autentica desde modo guest
+  // Detect when user signs in with Google (from login or from guest mode)
   useEffect(() => {
-    if (user && userMode === 'guest') {
-      // Usuario se autenticó desde guest mode
-      // Migrar datos de localStorage a Firebase
-      const guestTodos = loadTodosFromStorage()
-      
-      if (guestTodos.length > 0) {
-        // Guardar las tareas del guest en Firebase
-        setSaving(true)
-        Promise.all(
-          guestTodos.map(todo => saveTodo(user.uid, todo))
-        )
-          .then(() => {
-            console.log('Guest todos migrated to Firebase')
-            // Limpiar localStorage después de migrar
-            saveTodosToStorage([])
-          })
-          .catch(error => {
-            console.error('Error migrating guest todos:', error)
-          })
-          .finally(() => {
-            setSaving(false)
-          })
-      }
-      
+    if (user && (userMode === null || userMode === 'guest')) {
       setUserMode('authenticated')
-    } else if (!user && userMode === 'authenticated') {
-      // Usuario cerró sesión
-      setUserMode(null)
+      // Force reload lists when authenticating from guest mode
+      if (userMode === 'guest') {
+        setLoading(true)
+        setListCounts({}) // Clear counts to reload from Firebase
+      }
     }
   }, [user, userMode])
 
-  // Cargar todos según el modo
+  // Load lists on start
   useEffect(() => {
     if (isAuthenticated && user) {
-      // Modo autenticado - cargar de Firebase
       setLoading(true)
-      fetchUserTodos(user.uid)
+      fetchUserLists(user.uid)
+        .then(async (loadedLists) => {
+          setLists(loadedLists)
+          // Load counts for all lists
+          const counts: Record<string, { total: number; completed: number }> = {}
+          for (const list of loadedLists) {
+            const listTodos = await fetchListTodos(user.uid, list.id)
+            counts[list.id] = {
+              total: listTodos.length,
+              completed: listTodos.filter(t => t.completed).length
+            }
+          }
+          setListCounts(counts)
+        })
+        .catch(console.error)
+        .finally(() => setLoading(false))
+    } else if (isGuest) {
+      const storedLists = loadListsFromStorage()
+      setLists(storedLists)
+      // Load counts for all lists from localStorage
+      const counts: Record<string, { total: number; completed: number }> = {}
+      for (const list of storedLists) {
+        const listTodos = loadTodosFromStorage(list.id)
+        counts[list.id] = {
+          total: listTodos.length,
+          completed: listTodos.filter(t => t.completed).length
+        }
+      }
+      setListCounts(counts)
+      setLoading(false)
+    }
+  }, [user, isGuest, isAuthenticated])
+
+  // Load todos when a list is selected
+  useEffect(() => {
+    if (!activeListId) return
+    
+    if (isAuthenticated && user) {
+      setLoading(true)
+      fetchListTodos(user.uid, activeListId)
         .then(setTodos)
         .catch(console.error)
         .finally(() => setLoading(false))
     } else if (isGuest) {
-      // Modo guest - cargar de localStorage
-      const localTodos = loadTodosFromStorage()
-      setTodos(localTodos)
+      const todosForList = loadTodosFromStorage(activeListId)
+      setTodos(todosForList)
       setLoading(false)
     }
-  }, [user, userMode, isAuthenticated, isGuest])
+  }, [activeListId, user, isGuest, isAuthenticated])
+
+  // Update counts when todos of the active list change
+  useEffect(() => {
+    if (activeListId) {
+      setListCounts(prev => ({
+        ...prev,
+        [activeListId]: {
+          total: todos.length,
+          completed: todos.filter(t => t.completed).length
+        }
+      }))
+    }
+  }, [todos, activeListId])
+
+  // Functions for lists
+  const handleSelectList = (listId: string) => {
+    setActiveListId(listId)
+    setCurrentView('list-detail')
+    setLoading(true)
+  }
+
+  const handleBackToLists = () => {
+    setCurrentView('lists')
+    setActiveListId(null)
+    setTodos([])
+  }
+
+  const handleCreateList = async (name: string) => {
+    const newList: TodoList = {
+      id: crypto.randomUUID(),
+      name,
+      createdAt: Date.now()
+    }
+
+    // Force immediate view change to avoid flash in the grid
+    flushSync(() => {
+      setActiveListId(newList.id)
+      setCurrentView('list-detail')
+      setTodos([])
+    })
+
+    // Then update the rest of the state
+    const newLists = [...lists, newList]
+    setLists(newLists)
+
+    // Initialize count for the new list
+    setListCounts(prev => ({
+      ...prev,
+      [newList.id]: { total: 0, completed: 0 }
+    }))
+
+    if (isGuest) {
+      saveListsToStorage(newLists)
+    } else if (user) {
+      try {
+        await saveList(user.uid, newList)
+      } catch (error) {
+        console.error('Error saving list:', error)
+      }
+    }
+  }
+
+  const handleRenameList = async (listId: string, newName: string) => {
+    if (!newName.trim()) return
+    
+    const newLists = lists.map(l => 
+      l.id === listId ? { ...l, name: newName.trim() } : l
+    )
+    setLists(newLists)
+
+    if (isGuest) {
+      saveListsToStorage(newLists)
+    } else if (user) {
+      const listToUpdate = newLists.find(l => l.id === listId)
+      if (listToUpdate) {
+        try {
+          await saveList(user.uid, listToUpdate)
+        } catch (error) {
+          console.error('Error renaming list:', error)
+        }
+      }
+    }
+  }
+
+  const handleDeleteList = async (listId: string) => {
+    if (lists.length === 1) return // Don't allow deleting the last list
+    
+    const newLists = lists.filter(l => l.id !== listId)
+    setLists(newLists)
+
+    // Delete the count of the deleted list
+    setListCounts(prev => {
+      const newCounts = { ...prev }
+      delete newCounts[listId]
+      return newCounts
+    })
+
+    if (isGuest) {
+      saveListsToStorage(newLists)
+      deleteListTodos(listId)
+    } else if (user) {
+      try {
+        await deleteList(user.uid, listId)
+      } catch (error) {
+        console.error('Error deleting list:', error)
+      }
+    }
+
+    // If we're viewing the list that's going to be deleted, go back to lists view
+    if (activeListId === listId) {
+      handleBackToLists()
+    }
+  }
+
+  const getTodoCount = (listId: string) => {
+    return listCounts[listId] || { total: 0, completed: 0 }
+  }
+
+  // Detect when user signs out
+  useEffect(() => {
+    if (!user && userMode === 'authenticated') {
+      setUserMode(null)
+      setCurrentView('lists')
+      setActiveListId(null)
+      setTodos([])
+      setLists([])
+      setListCounts({})
+    }
+  }, [user, userMode])
 
 
   const handleContinueAsGuest = () => {
@@ -86,17 +244,16 @@ const App = () => {
 
   const handleRemove = async ({ id }: TodoId): Promise<void> => {
     if (!user && !isGuest) return
+    if (!activeListId) return
     
     const newTodos = todos.filter((todo) => todo.id !== id)
     setTodos(newTodos)
     
     if (isGuest) {
-      // Guardar en localStorage
-      saveTodosToStorage(newTodos)
+      saveTodosToStorage(activeListId, newTodos)
     } else if (user) {
-      // Guardar en Firebase
       try {
-        await deleteTodo(user.uid, id)
+        await deleteTodo(user.uid, activeListId, id)
       } catch (error) {
         console.error('Error deleting todo:', error)
       }
@@ -107,28 +264,28 @@ const App = () => {
     { id, completed }: Pick<TodoType, 'id' | 'completed'>
   ): Promise<void> => {
     if (!user && !isGuest) return
+    if (!activeListId) return
 
     const newTodos = todos.map((todo) => {
       if (todo.id === id) {
         return {
           ...todo,
           completed,
-          completedAt: completed ? Date.now() : undefined}
+          completedAt: completed ? Date.now() : undefined
+        }
       }
       return todo
     })
     setTodos(newTodos)
 
     if (isGuest) {
-      // Guardar en localStorage
-      saveTodosToStorage(newTodos)
+      saveTodosToStorage(activeListId, newTodos)
     } else if (user) {
-      // Guardar en Firebase
       const todoToUpdate = newTodos.find(t => t.id === id)
       if (todoToUpdate) {
         setSaving(true)
         try {
-          await saveTodo(user.uid, todoToUpdate)
+          await saveTodo(user.uid, activeListId, todoToUpdate)
         } catch (error) {
           console.error('Error updating todo:', error)
         } finally {
@@ -144,19 +301,18 @@ const App = () => {
 
   const handleRemoveAllCompleted = async (): Promise<void> => {
     if (!user && !isGuest) return
+    if (!activeListId) return
 
     const completedTodos = todos.filter(todo => todo.completed)
     const newTodos = todos.filter(todo => !todo.completed)
     setTodos(newTodos)
 
     if (isGuest) {
-      // Guardar en localStorage
-      saveTodosToStorage(newTodos)
+      saveTodosToStorage(activeListId, newTodos)
     } else if (user) {
-      // Guardar en Firebase
       try {
         for (const todo of completedTodos) {
-          await deleteTodo(user.uid, todo.id)
+          await deleteTodo(user.uid, activeListId, todo.id)
         }
       } catch (error) {
         console.error('Error deleting completed todos:', error)
@@ -185,6 +341,7 @@ const App = () => {
 
   const handleAddTodo = async ({ title }: TodoTitle): Promise<void> => {
     if (!user && !isGuest) return
+    if (!activeListId) return
 
     const newTodo: TodoType = {
       id: crypto.randomUUID(),
@@ -197,13 +354,11 @@ const App = () => {
     setTodos(newTodos)
 
     if (isGuest) {
-      // Guardar en localStorage
-      saveTodosToStorage(newTodos)
+      saveTodosToStorage(activeListId, newTodos)
     } else if (user) {
-      // Guardar en Firebase
       setSaving(true)
       try {
-        await saveTodo(user.uid, newTodo)
+        await saveTodo(user.uid, activeListId, newTodo)
       } catch (error) {
         console.error('Error saving todo:', error)
       } finally {
@@ -214,6 +369,7 @@ const App = () => {
 
   const handleUpdateTitle = async ({ id, title }: { id: string, title: string }): Promise<void> => {
     if (!user && !isGuest) return
+    if (!activeListId) return
 
     const newTodos = todos.map((todo) => {
       if (todo.id === id) {
@@ -224,15 +380,13 @@ const App = () => {
     setTodos(newTodos)
 
     if (isGuest) {
-      // Guardar en localStorage
-      saveTodosToStorage(newTodos)
+      saveTodosToStorage(activeListId, newTodos)
     } else if (user) {
-      // Guardar en Firebase
       const todoToUpdate = newTodos.find(t => t.id === id)
       if (todoToUpdate) {
         setSaving(true)
         try {
-          await saveTodo(user.uid, todoToUpdate)
+          await saveTodo(user.uid, activeListId, todoToUpdate)
         } catch (error) {
           console.error('Error updating todo:', error)
         } finally {
@@ -242,7 +396,7 @@ const App = () => {
     }
   }
 
-  // Mostrar loader mientras verifica auth
+  // Show loader while verifying auth
   if (authLoading) {
     return (
       <main className="app">
@@ -257,7 +411,7 @@ const App = () => {
     )
   }
 
-  // Mostrar login si no hay usuario
+  // Show login if no user
   if (!user && !isGuest) {
     return <Login 
       onSignIn={signInWithGoogle} 
@@ -265,7 +419,7 @@ const App = () => {
     />
   }
 
-  // Mostrar loader mientras carga los todos
+  // Show loader while loading todos
   if (loading) {
     return (
       <main className="app">
@@ -289,10 +443,10 @@ const App = () => {
       {isGuest ? (
         <div className="user-info guest-info">
           <div className="guest-info-container">
-          <svg height="16" strokeLinejoin="round" viewBox="0 0 16 16" width="16">
-            <path fillRule="evenodd" clipRule="evenodd" d="M7.75 0C5.95507 0 4.5 1.45507 4.5 3.25V3.75C4.5 5.54493 5.95507 7 7.75 7H8.25C10.0449 7 11.5 5.54493 11.5 3.75V3.25C11.5 1.45507 10.0449 0 8.25 0H7.75ZM6 3.25C6 2.2835 6.7835 1.5 7.75 1.5H8.25C9.2165 1.5 10 2.2835 10 3.25V3.75C10 4.7165 9.2165 5.5 8.25 5.5H7.75C6.7835 5.5 6 4.7165 6 3.75V3.25ZM2.5 14.5V13.1709C3.31958 11.5377 4.99308 10.5 6.82945 10.5H9.17055C11.0069 10.5 12.6804 11.5377 13.5 13.1709V14.5H2.5ZM6.82945 9C4.35483 9 2.10604 10.4388 1.06903 12.6857L1 12.8353V13V15.25V16H1.75H14.25H15V15.25V13V12.8353L14.931 12.6857C13.894 10.4388 11.6452 9 9.17055 9H6.82945Z" fill="currentColor" />
-          </svg>
-          <span className="guest-badge"> Guest Mode</span>
+            <svg height="16" strokeLinejoin="round" viewBox="0 0 16 16" width="16">
+              <path fillRule="evenodd" clipRule="evenodd" d="M7.75 0C5.95507 0 4.5 1.45507 4.5 3.25V3.75C4.5 5.54493 5.95507 7 7.75 7H8.25C10.0449 7 11.5 5.54493 11.5 3.75V3.25C11.5 1.45507 10.0449 0 8.25 0H7.75ZM6 3.25C6 2.2835 6.7835 1.5 7.75 1.5H8.25C9.2165 1.5 10 2.2835 10 3.25V3.75C10 4.7165 9.2165 5.5 8.25 5.5H7.75C6.7835 5.5 6 4.7165 6 3.75V3.25ZM2.5 14.5V13.1709C3.31958 11.5377 4.99308 10.5 6.82945 10.5H9.17055C11.0069 10.5 12.6804 11.5377 13.5 13.1709V14.5H2.5ZM6.82945 9C4.35483 9 2.10604 10.4388 1.06903 12.6857L1 12.8353V13V15.25V16H1.75H14.25H15V15.25V13V12.8353L14.931 12.6857C13.894 10.4388 11.6452 9 9.17055 9H6.82945Z" fill="currentColor" />
+            </svg>
+            <span className="guest-badge"> Guest Mode</span>
           </div>
           <button onClick={signInWithGoogle} className="sign-in-button">
             <svg viewBox="0 0 24 24" width="16" height="16">
@@ -322,28 +476,61 @@ const App = () => {
         </div>
       )}
 
-      <Header onAddTodo={handleAddTodo} />
-      <Toolbar
-        completedCount={completedCount}
-        filterSelected={filterSelected}
-        onClearCompleted={handleRemoveAllCompleted}
-        handleFilterChange={handleFilterChange}
-      />
-      <LayoutGroup>
-        <Todos 
-          todos={filteredTodos} 
-          removeTodo={handleRemove} 
-          setCompleted={handleCompletedTodo} 
-          setTitle={handleUpdateTitle}
-          filterSelected={filterSelected}
-        />
-        <Footer
-          activeCount={activeCount}
-          completedCount={completedCount}
-          theme={theme}
-          onThemeChange={changeTheme}
-        />
-      </LayoutGroup>
+      {/* Conditional view: Lists or List Detail */}
+      {currentView === 'lists' ? (
+        <LayoutGroup>
+          <ListsView
+            lists={lists}
+            onSelectList={handleSelectList}
+            onCreateList={handleCreateList}
+            onDeleteList={handleDeleteList}
+            getTodoCount={getTodoCount}
+          />
+          <Footer
+            listCount={lists.length}
+            mode="lists"
+            theme={theme}
+            onThemeChange={changeTheme}
+          />
+        </LayoutGroup>
+      ) : (
+        <>
+          <button onClick={handleBackToLists} className="back-button">
+            <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor">
+              <path fillRule="evenodd" clipRule="evenodd" d="M8.06036 11.0607L4.52513 7.52548L4 7.00035L4.52513 6.47523L8.06036 2.94L9.12102 4.00065L6.99923 6.12245L14.5 6.12245V7.62245L6.99923 7.62245L9.12102 9.74425L8.06036 10.8049V11.0607Z"/>
+            </svg>
+            Back to your lists
+          </button>
+          <Header 
+            listName={lists.find(l => l.id === activeListId)?.name}
+            listCreatedAt={lists.find(l => l.id === activeListId)?.createdAt}
+            onRenameList={(newName) => activeListId && handleRenameList(activeListId, newName)}
+            onAddTodo={handleAddTodo} 
+          />
+          <Toolbar
+            completedCount={completedCount}
+            filterSelected={filterSelected}
+            onClearCompleted={handleRemoveAllCompleted}
+            handleFilterChange={handleFilterChange}
+          />
+          <LayoutGroup>
+            <Todos 
+              todos={filteredTodos} 
+              removeTodo={handleRemove} 
+              setCompleted={handleCompletedTodo} 
+              setTitle={handleUpdateTitle}
+              filterSelected={filterSelected}
+            />
+            <Footer
+              activeCount={activeCount}
+              completedCount={completedCount}
+              mode="tasks"
+              theme={theme}
+              onThemeChange={changeTheme}
+            />
+          </LayoutGroup>
+        </>
+      )}
     </main>
   )
 }

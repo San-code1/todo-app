@@ -8,7 +8,7 @@
   position: relative;
 }
 
-/* Solo aplica hover en dispositivos con mouse/trackpad */
+/* Only apply hover on devices with mouse/trackpad */
 @media (hover: hover) {
   .view:hover {
     background-color: var(--bg-secondary);
@@ -23,7 +23,7 @@
   }
 }
 
-/* Mostrar siempre el botón destroy en móvil */
+/* Always show destroy button on mobile */
 @media (hover: none) {
   .destroy {
     display: block;
@@ -118,7 +118,7 @@ li:hover .destroy {
   margin: 0;
 }
 
-/* Cuando está editando */
+/* When editing */
 li.editing .edit {
   display: block;
 }

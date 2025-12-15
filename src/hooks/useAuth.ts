@@ -22,9 +22,18 @@ export const useAuth = () => {
 
   const signInWithGoogle = async () => {
     try {
-      await signInWithPopup(auth, googleProvider)
+      const result = await signInWithPopup(auth, googleProvider)
+      return result
     } catch (error) {
-      console.error('Error signing in:', error)
+      const authError = error as { code?: string; message?: string }
+      console.error('Error signing in:', authError.code, authError.message)
+      
+      // If the error is due to a blocked popup, show message to user
+      if (authError.code === 'auth/popup-blocked') {
+        alert('El popup fue bloqueado por el navegador. Por favor, permite popups para este sitio.')
+      }
+      
+      throw error
     }
   }
 

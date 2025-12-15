@@ -15,4 +15,10 @@ const app = initializeApp(firebaseConfig)
 
 export const auth = getAuth(app)
 export const googleProvider = new GoogleAuthProvider()
+
+// Configure provider for better UX
+googleProvider.setCustomParameters({
+  prompt: 'select_account' // Always show account selector
+})
+
 export const db = getFirestore(app)
