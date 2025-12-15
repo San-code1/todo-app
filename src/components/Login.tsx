@@ -5,11 +5,17 @@ import { Header } from './Header'
 import { TODO_FILTERS } from '../consts'
 import { motion } from 'motion/react'
 
-const MOCK_TODOS = [
+const MOCK_TODOS_ALL = [
+  { id: '1', title: 'Design homepage', completed: false, createdAt: Date.now() },
+  { id: '2', title: 'Review code', completed: false, createdAt: Date.now() - 1000 },
+  { id: '3', title: 'Team meeting', completed: true, createdAt: Date.now() - 2000 },
+]
+
+const MOCK_TODOS_ACTIVE = [
   { id: '1', title: 'Buy groceries', completed: false, createdAt: Date.now() },
   { id: '2', title: 'Call dentist', completed: false, createdAt: Date.now() - 1000 },
-  { id: '3', title: 'Finish project proposal', completed: true, createdAt: Date.now() - 2000 },
-  { id: '4', title: 'Morning workout', completed: true, createdAt: Date.now() - 3000 },
+  { id: '3', title: 'Update docs', completed: false, createdAt: Date.now() - 2000 },
+  { id: '4', title: 'Plan weekend', completed: false, createdAt: Date.now() - 3000 },
 ]
 
 interface Props {
@@ -52,27 +58,48 @@ export const Login: React.FC<Props> = ({ onSignIn, onContinueAsGuest }) => {
           Guest mode saves locally. Sign in to sync across devices.
         </p>
       </div>
-
-      <div className="preview-container">
-        <motion.div className="app-mockup" 
-          initial={{ opacity: 0, translateY: 10, filter: 'blur(10px)' }} 
-          animate={{ opacity: 1, translateY: 0, filter: 'blur(0px)' }} 
-          exit={{ opacity: 0, translateY: 10, filter: 'blur(10px)' }}
-          transition={{ duration: 0.25, ease: 'easeOut' }}
-          >
-          <Header 
-            autoFocus={false} 
-            onAddTodo={() => {}}/>
-          <Todos 
-            todos={MOCK_TODOS}
-            setCompleted={() => {}}
-            setTitle={() => {}}
-            removeTodo={() => {}}
-            filterSelected={TODO_FILTERS.ALL}
-          />
+      <div className="preview-container-wrapper">
+        {/* Lista izquierda - Todas las tareas */}
+        <motion.div 
+          className="preview-container"
+          initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ duration: 0.1, ease: 'easeOut' }}
+        >
+          <div className="app-mockup">
+            <Header 
+              autoFocus={false} 
+              onAddTodo={() => {}}/>
+            <Todos 
+              todos={MOCK_TODOS_ALL}
+              setCompleted={() => {}}
+              setTitle={() => {}}
+              removeTodo={() => {}}
+              filterSelected={TODO_FILTERS.ALL}
+            />
+          </div>
         </motion.div>
-        <div className="mockup-overlay">
-        </div>
+
+        {/* Lista central - Tareas activas (más grande) */}
+        <motion.div 
+          className="preview-container preview-center"
+          initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ duration: 0.1, ease: 'easeOut' }}
+        >
+          <div className="app-mockup">
+            <Header 
+              autoFocus={false} 
+              onAddTodo={() => {}}/>
+            <Todos 
+              todos={MOCK_TODOS_ACTIVE}
+              setCompleted={() => {}}
+              setTitle={() => {}}
+              removeTodo={() => {}}
+              filterSelected={TODO_FILTERS.ACTIVE}
+            />
+          </div>
+        </motion.div>
       </div>
     </div>
   )
