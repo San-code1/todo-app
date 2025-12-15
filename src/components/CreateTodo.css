@@ -60,8 +60,8 @@
 .new-todo:-webkit-autofill,
 .new-todo:-webkit-autofill:focus {
   -webkit-text-fill-color: inherit;
-  transition: background-color 5000s ease-in-out 0s; /* truco para neutralizar */
-  box-shadow: 0 0 0px 1000px transparent inset; /* elimina el fondo */
+  transition: background-color 5000s ease-in-out 0s; /* trick to neutralize */
+  box-shadow: 0 0 0px 1000px transparent inset; /* removes background */
 }
 
 .new-todo:focus {

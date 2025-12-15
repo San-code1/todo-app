@@ -129,6 +129,33 @@ body {
   background: var(--bg-secondary);
 }
 
+/* Back button */
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px;
+  margin: 0px 8px 0px 8px;
+  border-radius: 24px;
+  background: transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  corner-shape: squircle;
+}
+
+.back-button:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
+.back-button svg {
+  width: 16px;
+  height: 16px;
+}
+
 @media (max-width: 640px) {
   .app {
     padding-top: 1rem;

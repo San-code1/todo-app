@@ -8,6 +8,13 @@ export interface Todo {
     completedAt?: number 
 }
 
+export interface TodoList {
+    id: string
+    name: string
+    icon?: string
+    createdAt: number
+}
+
 export type TodoId = Pick<Todo, 'id'>
 export type TodoTitle = Pick<Todo, 'title'>
 export type TodoCompleted = Pick<Todo, 'completed'>
@@ -16,3 +23,5 @@ export type TodoIdTitle = Pick<Todo, 'id' | 'title'>
 export type ListOfTodos = Todo[]
 
 export type FilterValue = typeof TODO_FILTERS[keyof typeof TODO_FILTERS]
+
+export type View = 'lists' | 'list-detail'

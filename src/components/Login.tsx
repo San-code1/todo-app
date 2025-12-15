@@ -59,7 +59,7 @@ export const Login: React.FC<Props> = ({ onSignIn, onContinueAsGuest }) => {
         </p>
       </div>
       <div className="preview-container-wrapper">
-        {/* Lista izquierda - Todas las tareas */}
+        {/* Left list - All tasks */}
         <motion.div 
           className="preview-container"
           initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
@@ -80,7 +80,7 @@ export const Login: React.FC<Props> = ({ onSignIn, onContinueAsGuest }) => {
           </div>
         </motion.div>
 
-        {/* Lista central - Tareas activas (más grande) */}
+        {/* Center list - Active tasks (larger) */}
         <motion.div 
           className="preview-container preview-center"
           initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
