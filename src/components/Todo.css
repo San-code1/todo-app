@@ -11,11 +11,11 @@
 /* Solo aplica hover en dispositivos con mouse/trackpad */
 @media (hover: hover) {
   .view:hover {
-    background-color: #f3f4f6;
+    background-color: var(--bg-secondary);
   }
 
   .toggle:hover {
-    background-color: #f3f4f6;
+    background-color: var(--bg-secondary);
   }
 
   li:hover .destroy {
@@ -33,11 +33,12 @@
 .title {
   font-size: 1rem;
   font-weight: 500;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .title.completed {
-  color: #a3a3a3;
+  color: var(--text-secondary);
+  opacity: 0.6;
   text-decoration: line-through;
 }
 
@@ -47,8 +48,8 @@
   height: 24px;
   border-radius: 10px;
   appearance: none;
-  border: 1px solid #ccc;
-  background-color: #fff;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
   cursor: pointer;
   margin-right: 8px;
   corner-shape: squircle;
@@ -61,8 +62,8 @@
 }
 
 .toggle:checked {
-  background-color: #f3f4f6;
-  border: 1px solid #a3a3a3;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--text-secondary);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='16' stroke-linejoin='round' viewBox='0 0 16 16' width='16'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M15.5607 3.99999L15.0303 4.53032L6.23744 13.3232C5.55403 14.0066 4.44599 14.0066 3.76257 13.3232L4.2929 12.7929L3.76257 13.3232L0.969676 10.5303L0.439346 9.99999L1.50001 8.93933L2.03034 9.46966L4.82323 12.2626C4.92086 12.3602 5.07915 12.3602 5.17678 12.2626L13.9697 3.46966L14.5 2.93933L15.5607 3.99999Z' fill='%23666'/%3E%3C/svg%3E");
   background-size: 14px;
   background-position: center;
@@ -76,7 +77,7 @@
 }
 
 .toggle:focus-visible {
-  outline: 2px solid #171717;
+  outline: 2px solid var(--text-primary);
   outline-offset: 2px;
 }
 
@@ -108,7 +109,7 @@ li:hover .destroy {
   transform: translateY(-50%);
   font-size: 1rem;
   font-weight: 500;
-  color: #666;
+  color: var(--text-secondary);
   border: none;
   outline: none;
   background-color: transparent;

@@ -18,15 +18,15 @@ body {
   text-align: center;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .saving-indicator {
   position: fixed;
   bottom: 1rem;
   right: 1rem;
-  background: #171717;
-  color: white;
+  background: var(--text-primary);
+  color: var(--bg-primary);
   padding: 0.5rem 1rem;
   border-radius: 8px;
   font-size: 0.875rem;
@@ -46,6 +46,10 @@ body {
   filter: invert(0.5);
 }
 
+.dark .loading-animation {
+  filter: invert(0.8);
+}
+
 .user-info {
   display: flex;
   align-items: center;
@@ -63,13 +67,13 @@ body {
 .user-name {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
   flex: 1;
 }
 
 .sign-out-button {
   font-size: 0.75rem;
-  color: #666;
+  color: var(--text-secondary);
   padding: 6px 12px;
   border-radius: 6px;
   transition: all 0.15s ease;
@@ -79,8 +83,8 @@ body {
 }
 
 .sign-out-button:hover {
-  background: #eee;
-  color: #333;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 /* Guest mode styles */
@@ -91,6 +95,7 @@ body {
   gap: 8px;
   align-items: center;
 }
+
 .guest-info {
   display: flex;
   align-items: center;
@@ -102,7 +107,7 @@ body {
 .guest-badge {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #171717;
+  color: var(--text-primary);
 }
 
 .sign-in-button {
@@ -111,18 +116,17 @@ body {
   gap: 8px;
   padding: 6px 12px;
   border-radius: 8px;
-  background: white;
-  border: 1px solid #ddd;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
   font-size: 0.75rem;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .sign-in-button:hover {
-  background: #f9f9f9;
-  border-color: #ccc;
+  background: var(--bg-secondary);
 }
 
 @media (max-width: 640px) {

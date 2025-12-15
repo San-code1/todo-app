@@ -32,9 +32,25 @@
 
 :root {
   --font-sans: "Geist Sans", system-ui, sans-serif;
-  color: #171717;
-  background-color: #fff;
   font-family: var(--font-sans);
+
+  /* Light theme colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f8f8;
+  --text-primary: #171717;
+  --text-secondary: #666666;
+  --border-color: #dddddd;
+  --shadow-color: #6767671a;
+}
+
+:root.dark {
+  /* Dark theme colors */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #1a1a1a;
+  --text-primary: #e5e5e5;
+  --text-secondary: #999999;
+  --border-color: #333333;
+  --shadow-color: #a0b4d50a;
 }
 
 html {
@@ -53,6 +69,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   margin: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 h1,
@@ -73,14 +92,14 @@ h1 {
 h2 {
   font-size: 1rem;
   font-weight: 500;
-  color: #f0f0f0;
+  color: var(--text-secondary);
 }
 
 h3 {
   font-size: 0.75rem;
   font-weight: 500;
   text-transform: uppercase;
-  color: #f0f0f0;
+  color: var(--text-secondary);
   letter-spacing: 0em;
 }
 
