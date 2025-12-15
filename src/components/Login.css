@@ -134,42 +134,15 @@
   transition: all 0.3s ease;
 }
 
-@media (max-width: 1200px) {
-  .preview-center {
-    margin: 0;
-    transform: scale(0.85);
-  }
-
-  .preview-container-wrapper {
-    margin-top: 2rem;
-    padding: 1rem;
-    min-height: auto;
-  }
-
-  .app-mockup {
-    width: 100%;
-    max-width: 420px;
-  }
-}
-
 @media (max-width: 640px) {
   .login-container {
     margin-top: 1rem;
     overflow: hidden;
   }
 
-  .preview-center {
-    transform: scale(0.7);
-  }
-
   .preview-container-wrapper {
     margin-top: 1rem;
-    padding: 0.5rem;
-  }
-
-  .app-mockup {
-    width: 100%;
-    max-width: 100%;
+    padding: 1rem;
   }
 
   .login-buttons {
