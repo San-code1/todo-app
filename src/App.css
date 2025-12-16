@@ -82,11 +82,6 @@ body {
   gap: 8px;
 }
 
-.sign-out-button:hover {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-}
-
 /* Guest mode styles */
 
 .guest-info-container {
@@ -125,10 +120,6 @@ body {
   transition: all 0.15s ease;
 }
 
-.sign-in-button:hover {
-  background: var(--bg-secondary);
-}
-
 /* Back button */
 .back-button {
   display: flex;
@@ -145,10 +136,22 @@ body {
   corner-shape: squircle;
 }
 
-.back-button:hover {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  border-color: var(--text-secondary);
+/* Only apply hover on devices with mouse/trackpad */
+@media (hover: hover) and (pointer: fine) {
+  .sign-out-button:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+
+  .sign-in-button:hover {
+    background: var(--bg-secondary);
+  }
+
+  .back-button:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--text-secondary);
+  }
 }
 
 .back-button svg {

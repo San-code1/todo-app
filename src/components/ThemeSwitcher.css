@@ -26,11 +26,6 @@
   transition: all 0.15s ease;
 }
 
-.theme-button:hover {
-  color: #171717;
-  background: #0000000d;
-}
-
 .theme-button.active {
   color: #171717;
   background: #ffffff;
@@ -42,9 +37,17 @@
   color: #999999;
 }
 
-.dark .theme-button:hover {
-  color: #ffffff;
-  background: #ffffff1a;
+/* Only apply hover on devices with mouse/trackpad */
+@media (hover: hover) and (pointer: fine) {
+  .theme-button:hover {
+    color: #171717;
+    background: #0000000d;
+  }
+
+  .dark .theme-button:hover {
+    color: #ffffff;
+    background: #ffffff1a;
+  }
 }
 
 .dark .theme-button.active {

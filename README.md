@@ -1,6 +1,6 @@
 # ✅ Todo App
 
-A modern, fast, and beautiful todo application built with React and Firebase.
+A modern, fast, and beautiful todo application with multiple lists support, built with React and Firebase.
 
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)
@@ -13,45 +13,56 @@ A modern, fast, and beautiful todo application built with React and Firebase.
 
 ## ✨ Features
 
-- 📝 Create, edit, and delete tasks
-- ✅ Mark tasks as completed
-- 🔍 Filter by All / Active / Completed
-- 🗑️ Clear all completed tasks
-- 🔐 Google authentication
-- ☁️ Cloud sync with Firebase
-- 🎬 Smooth animations with Motion
-- 📱 Responsive design
-- ⚡ Optimistic UI updates
+- 📋 **Multiple Lists** - Organize tasks into different lists with folder-style UI
+- 📝 **Task Management** - Create, edit, and delete tasks
+- ✅ **Mark as Completed** - Track completed tasks with timestamps
+- 🔍 **Smart Filters** - Filter by All / Active / Completed
+- 🗑️ **Bulk Actions** - Clear all completed tasks at once
+- 🔐 **Flexible Authentication** - Google sign-in or Guest mode
+- ☁️ **Cloud Sync** - Automatic sync with Firebase (authenticated users)
+- 💾 **Local Storage** - Offline support for guest mode
+- 🎨 **Dark/Light Theme** - Seamless theme switching
+- 🎬 **Smooth Animations** - Motion-powered transitions
+- 📱 **Mobile Optimized** - Touch-friendly with optimized hover states
+- ⚡ **Optimistic UI** - Instant updates with background sync
 
 ## 🛠️ Tech Stack
 
 - **Frontend:** React 19, TypeScript
-- **Styling:** CSS (custom)
+- **Styling:** Custom CSS with CSS Variables
 - **Animations:** Motion (Framer Motion)
 - **Auth:** Firebase Authentication
 - **Database:** Firebase Firestore
-- **Build Tool:** Vite
+- **Local Storage:** Browser localStorage API
+- **Build Tool:** Vite 7
 - **Deployment:** Vercel
 
 ## 📁 Project Structure
 
 ```
 src/
-├── assets/          # Images and fonts
-├── components/      # React components
-│   ├── CreateTodo/
-│   ├── Filters/
-│   ├── Footer/
-│   ├── Header/
-│   ├── Login/
-│   ├── Todo/
-│   ├── Todos/
-│   └── Toolbar/
-├── hooks/           # Custom React hooks
-│   └── useAuth.ts
-├── services/        # Firebase services
-│   ├── firebase.ts
-│   └── firestore.ts
+├── assets/ # Images, fonts, and animations
+│ ├── fonts/
+│ └── Lottie-logo-dark.json
+├── components/ # React components
+│ ├── CreateTodo.tsx/.css
+│ ├── Filters.tsx/.css
+│ ├── Footer.tsx/.css
+│ ├── Header.tsx/.css
+│ ├── ListsView.tsx/.css
+│ ├── Login.tsx/.css
+│ ├── ThemeSwitcher.tsx/.css
+│ ├── Todo.tsx/.css
+│ ├── Todos.tsx/.css
+│ └── Toolbar.tsx/.css
+├── hooks/ # Custom React hooks
+│ ├── useAuth.ts
+│ └── useTheme.ts
+├── services/ # Backend services
+│ ├── firebase.ts
+│ ├── firestore.ts
+│ ├── localstorage.ts
+│ └── jsonbin.ts
 ├── App.tsx
 ├── consts.ts
 ├── types.ts

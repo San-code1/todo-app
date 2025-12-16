@@ -18,19 +18,22 @@
   transition: opacity 0.2s;
 }
 
-.header h1.editable:hover {
-  opacity: 0.7;
-}
-
 .edit-icon-hover {
   color: var(--text-secondary);
   display: none;
   flex-shrink: 0;
 }
 
-.title-container:hover .edit-icon-hover {
-  display: block;
-  color: var(--text-secondary);
+/* Only apply hover on devices with mouse/trackpad */
+@media (hover: hover) and (pointer: fine) {
+  .header h1.editable:hover {
+    opacity: 0.7;
+  }
+
+  .title-container:hover .edit-icon-hover {
+    display: block;
+    color: var(--text-secondary);
+  }
 }
 
 .list-title-input {

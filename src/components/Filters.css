@@ -20,12 +20,15 @@
   text-decoration: none;
 }
 
-.filter-button:hover {
-  filter: brightness(0.95);
-}
+/* Only apply hover on devices with mouse/trackpad */
+@media (hover: hover) and (pointer: fine) {
+  .filter-button:hover {
+    filter: brightness(0.95);
+  }
 
-.dark .filter-button:hover {
-  filter: brightness(1.15);
+  .dark .filter-button:hover {
+    filter: brightness(1.15);
+  }
 }
 
 .filter-button:active {

@@ -48,12 +48,15 @@
   opacity: 0.7;
 }
 
-.new-todo:hover {
-  filter: brightness(0.97);
-}
+/* Only apply hover on devices with mouse/trackpad */
+@media (hover: hover) and (pointer: fine) {
+  .new-todo:hover {
+    filter: brightness(0.97);
+  }
 
-.dark .new-todo:hover {
-  filter: brightness(1.1);
+  .dark .new-todo:hover {
+    filter: brightness(1.1);
+  }
 }
 
 /* Autofill (Chrome/Safari) */

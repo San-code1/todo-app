@@ -51,10 +51,6 @@
   margin-right: 12px;
 }
 
-.google-button:hover {
-  background: var(--bg-secondary);
-}
-
 .guest-button {
   display: flex;
   align-items: center;
@@ -71,10 +67,18 @@
   color: var(--text-primary);
 }
 
-.guest-button:hover {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+/* Only apply hover on devices with mouse/trackpad */
+@media (hover: hover) and (pointer: fine) {
+  .google-button:hover {
+    background: var(--bg-secondary);
+  }
+
+  .guest-button:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+  }
 }
+
 .guest-note-container {
   display: flex;
   flex-direction: row;

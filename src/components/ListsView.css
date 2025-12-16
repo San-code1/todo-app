@@ -33,10 +33,6 @@
   corner-shape: squircle;
 }
 
-.create-list-button:hover {
-  background: var(--text-secondary);
-}
-
 .create-list-button-icon {
   color: var(--bg-primary);
 }
@@ -68,7 +64,6 @@
   padding: 1.5rem;
   padding-top: 2rem;
   cursor: pointer;
-  transition: all 0.2s ease;
   min-height: 120px;
   display: flex;
   flex-direction: column;
@@ -129,15 +124,6 @@
   z-index: 2;
 }
 
-.list-card:hover {
-  filter: brightness(0.95);
-  transform: translateY(-2px);
-}
-
-.list-card:hover::before {
-  filter: brightness(0.93);
-}
-
 /* Folder content (protruding paper) */
 .folder-content {
   position: absolute;
@@ -154,18 +140,38 @@
   corner-shape: squircle;
 }
 
-.list-card:hover .folder-content {
-  height: 16px;
-  top: -16px;
-}
+/* Only apply hover on devices with mouse/trackpad */
+@media (hover: hover) and (pointer: fine) {
+  .list-card {
+    transition: filter 0.2s ease, transform 0.2s ease;
+  }
 
-.list-card:hover .list-delete {
-  opacity: 1;
-}
+  .create-list-button:hover {
+    background: var(--text-secondary);
+  }
 
-.list-delete:hover {
-  background: rgba(255, 0, 0, 0.1);
-  color: #ff4444;
+  .list-card:hover {
+    filter: brightness(0.95);
+    transform: translateY(-2px);
+  }
+
+  .list-card:hover::before {
+    filter: brightness(0.93);
+  }
+
+  .list-card:hover .folder-content {
+    height: 16px;
+    top: -16px;
+  }
+
+  .list-card:hover .list-delete {
+    opacity: 1;
+  }
+
+  .list-delete:hover {
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff4444;
+  }
 }
 
 .list-name-input {
@@ -178,6 +184,12 @@
   outline: none;
   font-family: inherit;
   padding: 0;
+}
+
+@media (max-width: 1024px) {
+  .list-delete {
+    opacity: 1;
+  }
 }
 
 @media (max-width: 640px) {

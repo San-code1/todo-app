@@ -18,9 +18,12 @@
   transition: transform 0.1s ease-in-out;
 }
 
-.clear-completed:hover {
-  color: var(--text-primary);
-  background-color: var(--bg-secondary);
+/* Only apply hover on devices with mouse/trackpad */
+@media (hover: hover) and (pointer: fine) {
+  .clear-completed:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-secondary);
+  }
 }
 
 .clear-completed:active {

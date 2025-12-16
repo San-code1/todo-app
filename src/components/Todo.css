@@ -9,7 +9,7 @@
 }
 
 /* Only apply hover on devices with mouse/trackpad */
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .view:hover {
     background-color: var(--bg-secondary);
   }
@@ -97,10 +97,6 @@
   display: none;
 }
 
-li:hover .destroy {
-  display: block;
-}
-
 .edit {
   display: none;
   position: absolute;
@@ -129,4 +125,10 @@ li.editing .title {
 
 li.editing .destroy {
   display: none;
+}
+
+@media (max-width: 1024px) {
+  .destroy {
+    display: block;
+  }
 }
