@@ -1,6 +1,7 @@
 import './ListsView.css'
 import { type TodoList } from '../types'
 import { motion, AnimatePresence } from 'motion/react'
+import { useWebHaptics } from 'web-haptics/react'
 
 interface Props {
   lists: TodoList[]
@@ -17,7 +18,10 @@ export const ListsView: React.FC<Props> = ({
   onDeleteList,
   getTodoCount
 }) => {
+  const { trigger } = useWebHaptics()
+
   const handleCreateNew = () => {
+    trigger('success')
     onCreateList('Untitled')
   }
 
@@ -84,6 +88,7 @@ export const ListsView: React.FC<Props> = ({
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
+                        trigger([{ duration: 50, intensity: 0.6 }])
                         onDeleteList(list.id)
                       }}
                       className="list-delete"

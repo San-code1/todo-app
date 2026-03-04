@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import './Todo.css'
 import { type Todo as TodoType } from '../types'
+import { useWebHaptics } from 'web-haptics/react'
 
 
 interface Props {
@@ -26,6 +27,7 @@ export const Todo: React.FC<Props> = ({
 }) => {
   const [editedTitle, setEditedTitle] = useState(title)
   const inputEditTitle = useRef<HTMLInputElement>(null)
+  const { trigger } = useWebHaptics()
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (e.key === 'Enter') {
@@ -56,7 +58,10 @@ export const Todo: React.FC<Props> = ({
         checked={completed}
         type='checkbox'
         style={{ pointerEvents: 'auto' }} 
-        onChange={(e) => { setCompleted({ id, completed: e.target.checked }) }} 
+        onChange={(e) => {
+          trigger(e.target.checked ? 'success' : 'nudge')
+          setCompleted({ id, completed: e.target.checked })
+        }}
       />
       <label 
         className={`title ${completed ? 'completed' : ''}`}
@@ -65,7 +70,10 @@ export const Todo: React.FC<Props> = ({
           </label>
       <button 
         className='destroy' 
-        onClick={() => { removeTodo({ id }) }}
+        onClick={() => {
+          trigger([{ duration: 50, intensity: 0.6 }])
+          removeTodo({ id })
+        }}
         aria-label={`Delete ${title}`}
       >
         <svg

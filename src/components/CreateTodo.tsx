@@ -1,6 +1,6 @@
 import { type TodoTitle } from '../types'
 import { useState } from 'react'
-
+import { useWebHaptics } from 'web-haptics/react'
 import './CreateTodo.css'
 
 interface Props {
@@ -10,9 +10,12 @@ interface Props {
 
 export const CreateTodo: React.FC<Props> = ({ saveTodo, autoFocus = true }) => {
   const [inputValue, setInputValue] = useState('')
+  const { trigger } = useWebHaptics()
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (!inputValue.trim()) return
+    trigger('success')
     saveTodo({ title: inputValue })
     setInputValue('')
   }
