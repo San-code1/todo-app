@@ -1,5 +1,5 @@
 import './App.css'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { flushSync } from 'react-dom'
 import { Todos } from './components/Todos'
 import { Header } from './components/Header'
@@ -38,6 +38,11 @@ const App = () => {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [listCounts, setListCounts] = useState<Record<string, { total: number; completed: number }>>({})
+  const [undoState, setUndoState] = useState<{
+    list: TodoList
+    count: { total: number; completed: number }
+  } | null>(null)
+  const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const isGuest = userMode === 'guest'
   const isAuthenticated = user !== null
@@ -191,34 +196,62 @@ const App = () => {
     }
   }
 
-  const handleDeleteList = async (listId: string) => {
-    if (lists.length === 1) return // Don't allow deleting the last list
-    
+  const handleDeleteList = (listId: string) => {
+    if (lists.length === 1) return
+
+    const listToDelete = lists.find(l => l.id === listId)
+    if (!listToDelete) return
+
+    // Remove from UI immediately
     const newLists = lists.filter(l => l.id !== listId)
     setLists(newLists)
-
-    // Delete the count of the deleted list
     setListCounts(prev => {
       const newCounts = { ...prev }
       delete newCounts[listId]
       return newCounts
     })
 
-    if (isGuest) {
-      saveListsToStorage(newLists)
-      deleteListTodos(listId)
-    } else if (user) {
-      try {
-        await deleteList(user.uid, listId)
-      } catch (error) {
-        console.error('Error deleting list:', error)
-      }
-    }
+    // Save for undo
+    setUndoState({
+      list: listToDelete,
+      count: listCounts[listId] || { total: 0, completed: 0 }
+    })
 
-    // If we're viewing the list that's going to be deleted, go back to lists view
+    // Clear any previous pending deletion
+    if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current)
+
+    // Actually delete from backend after 5 seconds
+    undoTimeoutRef.current = setTimeout(async () => {
+      setUndoState(null)
+      if (isGuest) {
+        saveListsToStorage(newLists)
+        deleteListTodos(listId)
+      } else if (user) {
+        try {
+          await deleteList(user.uid, listId)
+        } catch (error) {
+          console.error('Error deleting list:', error)
+        }
+      }
+    }, 5000)
+
     if (activeListId === listId) {
       handleBackToLists()
     }
+  }
+
+  const handleUndoDelete = () => {
+    if (!undoState) return
+    if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current)
+
+    setLists(prev =>
+      [...prev, undoState.list].sort((a, b) => a.createdAt - b.createdAt)
+    )
+    setListCounts(prev => ({
+      ...prev,
+      [undoState.list.id]: undoState.count
+    }))
+    setUndoState(null)
   }
 
   const getTodoCount = (listId: string) => {
@@ -438,6 +471,17 @@ const App = () => {
   return (
     <main className="app">
       {saving && <span className="saving-indicator">Saving task...</span>}
+
+      {undoState && (
+        <div className="undo-toast">
+          <span className="undo-toast-text">
+            <strong>&ldquo;{undoState.list.name}&rdquo;</strong> deleted
+          </span>
+          <button className="undo-toast-button" onClick={handleUndoDelete}>
+            Undo
+          </button>
+        </div>
+      )}
       
       {/* User info + Sign out */}
       {isGuest ? (
